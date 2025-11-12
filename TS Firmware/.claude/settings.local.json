@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(Select-Object FullName)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(dir:*)",
+      "Bash(nul)"
     ],
     "deny": [],
     "ask": []

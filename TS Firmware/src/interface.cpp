@@ -4,6 +4,7 @@
 #include "mcp3008.h"
 #include "continuous_pot.h"
 #include "led_bar.h"
+#include "main.h"
 
 CRGB leds[NUM_LEDS];
 LEDBar ledBars[NUM_CONT_POTS];
@@ -123,36 +124,12 @@ void printPots()
 
 void initLedBars()
 {
-	ledBars[0].firstLedIndex = POT1_LED_INDEX_START;
-	ledBars[1].firstLedIndex = POT2_LED_INDEX_START;
-	ledBars[2].firstLedIndex = POT3_LED_INDEX_START;
-
-	ledBars[0].dataDirection = 1;
-	ledBars[1].dataDirection = 1;
-	ledBars[2].dataDirection = 1;
-
-	ledBars[0].ledMode = PotLedFillGradient;
-	ledBars[1].ledMode = PotLedFillGradient;
-	ledBars[2].ledMode = PotLedFillGradient;
-
-	for (uint8_t i = 0; i < NUM_CONT_POTS; i++)
-	{
-		ledBars[i].numLeds = NUM_LEDS_PER_RING;
-
-		ledBars[i].mode = PotCentred;
-
-		ledBars[i].wrap = PotWrap;
-		ledBars[i].value = 0;
-		ledBar_Update(&ledBars[i]);
-	}
-	ledBars[0].colours[0] = csvNeonPink;
-	ledBars[0].colours[1] = csvNeonLightBlue;
-
-	ledBars[1].colours[0] = csvNeonPink;
-	ledBars[1].colours[1] = csvNeonLightBlue;
-
-	ledBars[2].colours[0] = csvNeonLime;
-	ledBars[2].colours[1] = csvNeonRed;
+	ledBar_Init(&ledBars[0], POT1_LED_INDEX_START, NUM_LEDS_PER_RING, PotNormal,
+				PotWrap, globalSettings.contPotLedModes[0], 1, globalSettings.contPotColours[0][0], globalSettings.contPotColours[0][1]);
+	ledBar_Init(&ledBars[1], POT2_LED_INDEX_START, NUM_LEDS_PER_RING, PotNormal,
+				PotWrap, globalSettings.contPotLedModes[1], 1, globalSettings.contPotColours[1][0], globalSettings.contPotColours[1][1]);
+	ledBar_Init(&ledBars[2], POT3_LED_INDEX_START, NUM_LEDS_PER_RING, PotCentred,
+				PotWrap, globalSettings.contPotLedModes[2], 1, globalSettings.contPotColours[2][0], globalSettings.contPotColours[2][1]);
 }
 
 void toggle1ISR()
@@ -174,7 +151,7 @@ void handleToggle1()
 	if(stateA && !stateB)
 	{
 		Serial.println("Toggle 1: Left Position");
-		leds[TOGGLE1_LEFT_LED] = CRGB::White;
+		leds[TOGGLE1_LEFT_LED] = globalSettings.toggleColours[0][0];
 		leds[TOGGLE1_MID_LED] = 0;
 		leds[TOGGLE1_RIGHT_LED] = 0;
 	}
@@ -183,13 +160,13 @@ void handleToggle1()
 		Serial.println("Toggle 1: Right Position");
 		leds[TOGGLE1_LEFT_LED] = 0;
 		leds[TOGGLE1_MID_LED] = 0;
-		leds[TOGGLE1_RIGHT_LED] = CRGB::White;
+		leds[TOGGLE1_RIGHT_LED] = globalSettings.toggleColours[0][2];
 	}
 	else if(stateA && stateB)
 	{
 		Serial.println("Toggle 1: Middle Position");
 		leds[TOGGLE1_LEFT_LED] = 0;
-		leds[TOGGLE1_MID_LED] = CRGB::White;
+		leds[TOGGLE1_MID_LED] = globalSettings.toggleColours[0][1];
 		leds[TOGGLE1_RIGHT_LED] = 0;
 	}
 	else
@@ -209,7 +186,7 @@ void handleToggle2()
 	if(stateA && !stateB)
 	{
 		Serial.println("Toggle 2: Left Position");
-		leds[TOGGLE2_LEFT_LED] = CRGB::White;
+		leds[TOGGLE2_LEFT_LED] = globalSettings.toggleColours[1][0];
 		leds[TOGGLE2_MID_LED] = 0;
 		leds[TOGGLE2_RIGHT_LED] = 0;
 	}
@@ -218,14 +195,14 @@ void handleToggle2()
 		Serial.println("Toggle 2: Right Position");
 		leds[TOGGLE2_LEFT_LED] = 0;
 		leds[TOGGLE2_MID_LED] = 0;
-		leds[TOGGLE2_RIGHT_LED] = CRGB::White;
+		leds[TOGGLE2_RIGHT_LED] = globalSettings.toggleColours[1][2];
 	}
 	else if(stateA && stateB)
 	{
 		Serial.println("Toggle 2: Middle Position");
 		Serial.println("Toggle 1: Middle Position");
 		leds[TOGGLE2_LEFT_LED] = 0;
-		leds[TOGGLE2_MID_LED] = CRGB::White;
+		leds[TOGGLE2_MID_LED] = globalSettings.toggleColours[1][1];
 		leds[TOGGLE2_RIGHT_LED] = 0;
 	}
 	else
